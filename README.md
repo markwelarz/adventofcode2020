@@ -19,6 +19,13 @@ In part 2, the input needed to be reset and re-read.  I usually use Spring's `Re
 the input as a String (`ByteArrayResource`) for unit tests or as a classpath file (`ClasspathResource`).  I've replaced
 the Resource with Guava's `CharSource` which is re-readable.  
 
+#### Day 2
+It would be easy to use regex's to extract the min, max, character and password from the input file but today's solution
+is stupidly over-engineered.  I've used the excellent [Parboiled](https://github.com/sirthias/parboiled) to generate a
+parser for the grammar.  Parboiled can generate ASTs, and here, for part 1, I've used Parboiled to generate a list of
+`PasswordEntry` objects that have an `isValidPart1` method with a simple less-than/greater expression.  For part 2, the
+same parser works just as well, but there is slightly a different `isValidPart2` method.
+
 #### Day 1
 In part 1, I used the fine [combinatoricslib3](https://github.com/dpaukov/combinatoricslib3) to generate
 2-combination sets of the input numbers.  Then I filtered it for the sum (of the 2-entry set) to be 2020, then
