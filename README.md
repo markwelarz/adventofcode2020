@@ -6,6 +6,26 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 4
+Part 1 is a bit of a parsing problem.  We have to handle passport records that may be split across multiple lines, and
+that fields can be in any order.  I'm still avoiding regular-expressions of course, and I'm not going to repeat the
+over-engineering parser effort from day 2.  The double-newline is an easy way of splitting passport records, then I used
+Guava's mighty-useful [Map Splitter](https://guava.dev/releases/30.0-jre/api/docs/com/google/common/base/Splitter.MapSplitter.html)
+to create a Java Map of key/value pairs.  Super-easy parsing with a not-too-horrible overly long stream statement.  The
+validation requirements, although quite wordy in the problem, is really just everything is required except for
+country-ID.
+
+Part 2 reads like a Bean Validation example from a textbook.  I did try to find a nice alternative, but in the end I've
+done it with Hibernate Validator.  Validation, and testing validation, is not interesting (sorry, validator engineers)
+and this part did feel a little bit like doing work.  I used Apache Commons BeanUtils to populate a bean instance from
+the Map that was parsed.  For the height field, which can be in both inches or centimetres, I wanted to use a type with
+a length and a unit, so I tried out the Units and Measures library
+[Indriya](https://unitsofmeasurement.github.io/indriya/).  It has a `QuantityFormat` that works along the same lines as
+a `SimpleDateFormat`.  It will parse `150 cm` but definitely not `150cm`.  Even after reformatting the input, it then
+did not handle inches as a unit(!).  I reverted to using a `String` type and wrote a custom validator for that field.
+This solution is over-engineering again of course, but it was still interesting to wire up Commons-BeanUtils and 
+Hibernate Validator without Spring involved.
+
 #### Day 3
 There are 2 insights that can solve this problem:
 * The repeating pattern is a sign that you can calculate cycled/wrapped horizontal positions using the modulus operator
