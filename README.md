@@ -6,6 +6,28 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 6
+Super-succinct Stream/reduction while being reasonably readable solutions for both parts, today.  For part 1, I've used
+the same Guava double-line splitter technique as in Day 4.  Then I took each multiline group, removed all the whitespace
+and split into distinct characters, then count the elements.  Part 2 is similar, but we need to preserve characters
+per-line, I mapped each line (person) in the group to a set of its characters, then reduced the sets into a single set
+using an intersection.  The count is the number of characters common to every person in the group.  I was expecting a
+tough one today, but the difficulty has regressed!
+
+#### Day 5
+The difficulty level has taken a step up today.  It's the first problem that the algorithm can be implemented at face-
+value, as described, and that also has a shorter and simpler solution.  At first I tried cheekily submitting the highest
+ID based on being in the back-most row and right-most column but they hadn't left that gap open.  With a boarding
+pass ID, I noticed they follow the same counting pattern as a binary number: `FFFF,FFFB,FFBF,FFBB,...` is equivalent to
+`0000,0001,0010,0011,...`.  Similarly, the column section `LLL,LLR,LRL,LRR,...` is equivalent to `000,001,010,011,...`.
+The row/column numbers are 0-127 and 0-7 and after the calculation is a continuous sequence of integers from 11 to 850.
+My solution is to split the row and the column part of the String, then convert the 2 Strings into base-2 numbers, then
+do the calculation described in the problem.  Part 1 is an unreadable oversized stream pipeline.
+
+For part 2, because we know the ID of every seat, we can just sum them, then compare them to the sum of seat IDs of the
+seats we've seen in the input.  The difference is our seat number.
+
+
 #### Day 4
 Part 1 is a bit of a parsing problem.  We have to handle passport records that may be split across multiple lines, and
 that fields can be in any order.  I'm still avoiding regular-expressions of course, and I'm not going to repeat the
