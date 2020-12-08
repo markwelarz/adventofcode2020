@@ -6,6 +6,23 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 7
+This is a nice parsing and tree/recursion problem rolled into one (although my solution uses neither a tree structure or
+a recursive algorithm).  The parse is slightly more tricky than at first glance; there are four variants of the
+"contain" part of the sentence, and the colours can be made up of multiple words.
+```
+light blue bags contain 1 bright yellow bag.
+blue bags contain 3 yellow bags.
+blue bags contain 1 yellow bag, 5 green bags.
+blue bags contain no other bags.
+```
+I used Commons Lang's StringUtils to chop up the line and extract the numbers and colours.
+
+The first part is to count the number of ancestors of a node (a bag).  A node can have multiple parents but there are no
+circular dependencies.  The second part is to count the children, where each level multiplies the previous level.
+The concept is simple, but it's very easy to cause yourself a headache with the multiply, especially at the top and
+bottom of the tree.
+
 #### Day 6
 Super-succinct Stream/reduction while being reasonably readable solutions for both parts, today.  For part 1, I've used
 the same Guava double-line splitter technique as in Day 4.  Then I took each multiline group, removed all the whitespace
