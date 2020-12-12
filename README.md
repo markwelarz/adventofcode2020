@@ -6,6 +6,16 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 9
+For part 1, I used the sliding-windowing feature from the excellent [Proton Pack](https://github.com/ProtonMail/proton-pack)
+library.  I've used a window of size 25 (5 for the example test) and compared the sum of the window'ed with the
+subsequent number in the sequence.  For part 2, initially I wrote a brute-force algorithm.  It would take a sum of
+every possible combination of window-size and position.  Despite the brute-force, it still took only 2s to find the
+answer, but nevertheless I don't usually like to use this technique, so I've written a faster solution using the
+prefix-sum data structure.  I've ran both solutions 100 times to compare run times.  The prefix-sum algorithm is
+219x faster.
+![Speeds compared](/screenshots/day9.png)
+
 #### Day 7
 This is a nice parsing and tree/recursion problem rolled into one (although my solution uses neither a tree structure or
 a recursive algorithm).  The parse is slightly more tricky than at first glance; there are four variants of the
