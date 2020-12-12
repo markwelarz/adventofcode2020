@@ -11,10 +11,19 @@ For part 1, I used the sliding-windowing feature from the excellent [Proton Pack
 library.  I've used a window of size 25 (5 for the example test) and compared the sum of the window'ed with the
 subsequent number in the sequence.  For part 2, initially I wrote a brute-force algorithm.  It would take a sum of
 every possible combination of window-size and position.  Despite the brute-force, it still took only 2s to find the
-answer, but nevertheless I don't usually like to use this technique, so I've written a faster solution using the
-prefix-sum data structure.  I've ran both solutions 100 times to compare run times.  The prefix-sum algorithm is
-219x faster.
-![Speeds compared](/screenshots/day9.png)
+answer, but nevertheless I don't usually like to use this technique (especially as Day8 was also a brute-force), so I've
+written a faster solution using the prefix-sum data structure.  I've ran both solutions 100 times to compare run times.
+The prefix-sum algorithm is 219x faster. ![Speeds compared](/screenshots/day9.png)
+
+#### Day 8
+This took me back to AoC 2019 and the IntCode runtime which was great fun.  This language is much simpler however.  I've 
+done nothing clever, stupid, nor I have I used any new libraries today.  In part 1, my program updates a set of "seen"
+instructions, and upon each instruction will check and throw a `InfiniteLoopException` if it encounters an instruction
+that has been ran before.  For part 2, I refactored my `ProgramRunner` class so it would handle both parts.  It's a
+brute force algorithm, that, one at a time, swaps a JMP and NOP instruction and rerunning the program until an
+`InfiniteLoopException` is not thrown.  This is possibly the first time I've ever used the new Pattern Matching
+`instanceof` experimental feature in Java 14 in actual code.  I've also used the new switch expression, although my
+IntelliJ formatting rules seem to have messed that up.
 
 #### Day 7
 This is a nice parsing and tree/recursion problem rolled into one (although my solution uses neither a tree structure or
