@@ -6,6 +6,28 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 10
+You have to read the puzzle carefully for part 1 because there is some behaviour at the beginning and end of the sequence
+that isn't obvious.  In part 1, the only valid chain that uses every adapter is in ascending order.  I sort the list of
+numbers and counted the number of differences between subsequent elements that is 1 or 3.  Part 2 is an interesting
+puzzle.  I did this on day 15, and I'd seen a meme on Reddit that implied that a recursive-tree algorithm was the wrong
+way to solve it, so I'd already came at this with a preconception, and I spent too much time thinking of a non-tree
+solution.  But actually, a recursive tree solution is a good solution and is O(n) (excluding the sort).
+
+Using the first example from the puzzle, our tree looks like this:
+
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBTKChDaGFyZ2luZyBvdXRsZXQ6MCApKSAtLT4gQVxuICAgIEFbMV0gLS0-IEJcbiAgICBCWzRdIC0tPiBDXG4gICAgQls0XSAtLT4gRFxuICAgIEJbNF0gLS0-IEVcbiAgICBDWzVdIC0tPiBEXG4gICAgQ1s1XSAtLT4gRVxuICAgIERbNl0gLS0-IEVcbiAgICBFWzddIC0tPiBGXG4gICAgRlsxMF0gLS0-IEdcbiAgICBGWzEwXSAtLT4gSFxuICAgIEdbMTFdIC0tPiBIXG4gICAgSFsxMl0gLS0-IElcbiAgICBJWzE1XSAtLT4gSlxuICAgIEpbMTZdIC0tPiBLXG4gICAgS1sxOV0gLS0-IExbeW91ciBkZXZpY2U6IDIyXVxuICAgIHN0eWxlIFMgZmlsbDojOTllZTk5XG4gICAgc3R5bGUgTCBmaWxsOiM5OWVlOTlcblxuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggTFJcbiAgICBTKChDaGFyZ2luZyBvdXRsZXQ6MCApKSAtLT4gQVxuICAgIEFbMV0gLS0-IEJcbiAgICBCWzRdIC0tPiBDXG4gICAgQls0XSAtLT4gRFxuICAgIEJbNF0gLS0-IEVcbiAgICBDWzVdIC0tPiBEXG4gICAgQ1s1XSAtLT4gRVxuICAgIERbNl0gLS0-IEVcbiAgICBFWzddIC0tPiBGXG4gICAgRlsxMF0gLS0-IEdcbiAgICBGWzEwXSAtLT4gSFxuICAgIEdbMTFdIC0tPiBIXG4gICAgSFsxMl0gLS0-IElcbiAgICBJWzE1XSAtLT4gSlxuICAgIEpbMTZdIC0tPiBLXG4gICAgS1sxOV0gLS0-IExbeW91ciBkZXZpY2U6IDIyXVxuICAgIHN0eWxlIFMgZmlsbDojOTllZTk5XG4gICAgc3R5bGUgTCBmaWxsOiM5OWVlOTlcblxuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
+
+Basically, a path, but with branches that skip nodes.  The part-2 algorithm is a fairly simple depth-first recursion,
+that counts the number of paths that reach the end-node.  This is ok for the test input, but is extremely slow (never
+finishes) for the solution input for day-10, which has 102 numbers.  I used some caching (I can't really call it a
+memoize as it's not done functionally) to add a dynamic programming optimization into the recursive tree.  The cache is
+keyed on the previous node's rating but is stored on the node, so effectively the key is previous-rating and
+current-rating.  It stores the result of traversing through the subnodes of a particular node.  Interestingly, my first
+iteration only keyed on the current node (not combined with the previous rating) and all of the test data and the input
+data passed.  I don't know if that was because the organisers have tried not to make the input data too complicated or
+whether my input was just like that.
+
 #### Day 9
 For part 1, I used the sliding-windowing feature from the excellent [Proton Pack](https://github.com/ProtonMail/proton-pack)
 library.  I've used a window of size 25 (5 for the example test) and compared the sum of the window'ed with the
