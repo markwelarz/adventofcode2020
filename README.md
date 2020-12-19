@@ -6,6 +6,35 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 18
+Left-to-right expression parsing in part1?  No need to construct a parser, I can tokenize and do the calculation in a
+single pass.  There are only single digits in the input and tests, so the parsing was kept to a minimum: I removed all
+the spaces and split by character.  Part 2 was a bit more complex, and different enough that I didn't end up reusing any
+code from part 1.  The reverse-precendence of multiply/addition foiled any plans of passing the entire input through an
+expression engine.  I'd already used Parboiled in Day 2, so I wasn't going to repeat it but it would have been a good
+option for this puzzle.  Instead I decided to hand-code a bottom-up parser evaluator `StringBuilder`'s, splitting,
+regular-expressions (first time I've used Regex in AoC-2020).  I compute the inner-most bracketed part of the
+expression and replace the evaluated section in the StringBuilder, then move outwards, as shown below.  It's a bit
+unrefined but it was fun to see the expression being reduced in a similar way to how a human would solve it.
+
+```
+8*6+(5*(3+2*8+2+7+4)+(7+5*6)*9)
+8*6+(5*(3+2*8+2+7+4)+72*9)
+8*6+(5*105+72*9)
+8*6+7965
+```
+
+#### Day 16
+This was my favourite puzzle so far.  It's a process of a number of different elimination rules.  I created a data
+structure, it's a bit clumsy - it's a `Map` of `Set`s, where key=field name, value=a set of the possible fields
+(numbers) on a ticket that this could be valid for.  The first (which is all of part 1), is to apply the rules to every
+field on the ticket, and tickets that contain field values that don't pass any of the rules can be discarded.  The
+second elimination is to eliminate any field-name->field-number mappings that don't pass their corresponding rules.  The
+third elimination is to check whether there are any fields that only have 1 possible field number left, and eliminate
+that field number from every other field mapping.  Now at this point I was expecting to still have to deal with some
+unresolved field mappings, and to have to do some inferencing using a tree search.  But actually, these 3 eliminations
+were enough to reduce the possible mappings to a one for each field.
+
 #### Day 10
 You have to read the puzzle carefully for part 1 because there is some behaviour at the beginning and end of the sequence
 that isn't obvious.  In part 1, the only valid chain that uses every adapter is in ascending order.  I sort the list of
