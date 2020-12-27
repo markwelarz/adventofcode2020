@@ -35,6 +35,62 @@ that field number from every other field mapping.  Now at this point I was expec
 unresolved field mappings, and to have to do some inferencing using a tree search.  But actually, these 3 eliminations
 were enough to reduce the possible mappings to a one for each field.
 
+#### Day 11
+This is a nice one.  It is deceptively straightforward, but the implementation details, especially in part 2, benefit
+from some finer grained unit tests than just the provided test inputs, because there are lots of moving parts that can
+go wrong.  As ever, I've over-engineered this solution to make it more fun.  The rules about flipping occupied to
+unoccupied status are a good match for a decision-table.  The fine [multi-matcher](https://github.com/richardstartin/multi-matcher)
+library calls itself a rules engine, but I've used it before for a decision-table problem and it worked well.  I like
+that it's strongly typed unlike most other rules engines I've seen in Java, and I really like that attributes ("facts" 
+in some other rules engines) aren't restricted to being Java Bean properties, but are Java 8 `Function`s of the input.
+
+So, to create our rules engine ("classifier", in multi-matcher speak), we need to create some data (attributes) and some
+rules ("constraints") to act on those attributes.  The attributes need to be simple data types, and rules are simple
+operators (equals, greater-than, ...).  A "not-equals" would be very useful, as would a few more advanced classifier
+rules, or some examples of adding custom rules.  So, our attributes are as follows.  The first two return ints and the
+rest booleans:
+
+```
+.withAttribute("thisSeat", this::thisSeat)
+.withAttribute("countOccupied", this::countOccupied))
+.withAttribute("above", this::aboveOccupied)
+.withAttribute("below", this::belowOccupied)
+.withAttribute("left", this::leftOccupied)
+.withAttribute("right", this::rightOccupied)
+.withAttribute("aboveLeft", this::aboveLeftOccupied)
+.withAttribute("aboveRight", this::aboveRightOccupied)
+.withAttribute("belowLeft", this::belowLeftOccupied)
+.withAttribute("belowRight", this::belowRightOccupied)
+```
+
+... and some rules to act on the data.
+
+```
+MatchingConstraint.<String, Integer>named("becomes empty")
+                .eq("thisSeat", SeatingArea.occupied)
+                .ge("countOccupied", visibleOccupied)
+                .classification(SeatingArea.empty)
+                .build(),
+
+MatchingConstraint.<String, Integer>named("becomes occupied")
+                .eq("thisSeat", SeatingArea.empty)
+                .eq("above", false)
+                .eq("below", false)
+                .eq("left", false)
+                .eq("right", false)
+                .eq("aboveLeft", false)
+                .eq("aboveRight", false)
+                .eq("belowLeft", false)
+                .eq("belowRight", false)
+                .classification(SeatingArea.occupied)
+```
+
+For part 2, the rules are a bit different.  I refactored so the attributes `Functions` to be abstract methods, and
+wrote separate implementations for `leftOccupied` and friends.  To make things more interesting, I decided to store the
+seating area as a 1D array using row-major ordering and it was this that caused most of my bugs :-)  The solution has
+quite a nice design, although there are algorithms and duplication that I wouldn't normally leave if it were 
+production code.
+
 #### Day 10
 You have to read the puzzle carefully for part 1 because there is some behaviour at the beginning and end of the sequence
 that isn't obvious.  In part 1, the only valid chain that uses every adapter is in ascending order.  I sort the list of
