@@ -24,6 +24,39 @@ unrefined but it was fun to see the expression being reduced in a similar way to
 8*6+7965
 ```
 
+#### Day 17
+This is quite similar to day 11 and I could have used a similar solution, but I've done something better.  At first,
+the problem seems quite complicated, but the infinite grid acutally makes it simpler.  The first leap I made is that I
+only need to store active cubes.  Using a `Set` of Cubes.  Each cycle, I just iterate the enabled cubes and copy any
+the pass the enabled-rule to a second `Set`.  Any neighbours of the cube in question that aren't enabled (in the original
+`Set`), I then apply the inactive-rule after getting their neighbours, and add any that pass the rule to the second
+`Set`.  The second `Set` is overwritten to be main Set, and is repeated for 6 cycles.
+
+For part 2 I was expecting something like day-11 part 2, but instead the grid is expanded to 4-dimensions.  My algorithm
+works for part 2 as well, I've just used a different Cube model.  This solution does not scale well.  Part 2 takes
+14s on my laptop; the same cubes are processed more than once on each cycle which may be the problem, or the algorithm
+may be O(n4) for part 2.
+
+The example steps for part 1 seems to produce a different result than I expect.  Before any cycles:
+```
+z=0
+.#.
+..#
+###
+```
+
+After 1 cycle:
+```
+z=0
+#.#
+.##
+.#.
+```
+
+Surely the bottom-right cube has two enabled neighbours and should remain enabled?  Nevertheless, the solution produces
+the right answer.
+
+
 #### Day 16
 This was my favourite puzzle so far.  It's a process of a number of different elimination rules.  I created a data
 structure, it's a bit clumsy - it's a `Map` of `Set`s, where key=field name, value=a set of the possible fields
