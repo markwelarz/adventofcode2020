@@ -6,6 +6,46 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 19
+I was contemplating using Parboiled (see day 2) again today but then it struck me that the syntax rules are very
+simple, with only sequences and choices.  As a bit of a joke I tried expanding out rule 0 fully into a single regular
+expression.  I used the super-useful [StringSubstitutor](https://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/StringSubstitutor.html)
+from [Apache Commons Text](https://commons.apache.org/proper/commons-text/) library.  It was quite easy to load a
+`HashMap` with the rules: replace all of the rule number references in each rule with variables:
+`12 | 16 -> ${12} | ${16}`, and then remove all whitespace.  For part 1 the resulting regular expression was over 4000
+characters and I didn't expect it to work at all, but it ran in 14ms.  In part 2 rules reference themselves.  Recursive
+parse-rules can usually be converted into rules that use repetition:
+
+```
+Rule 8: 42 | 42 8
+=> 42
+=> 42 42
+=> 42 42 42
+(42)+
+```
+
+Rule 8 can be converted very easily.  But rule 11 is a bit more tricky:
+
+```
+Rule 11: 42 31 | 42 11 31
+=> 42 31
+=> 42 42 31 31
+=> 42 42 42 42 31 31 31 31
+=> 42 42 42 42 42 31 31 31 31 31
+```
+
+It can be represented by a sequence of `42`s then the same number of `31`s.  This could be done via backreferences (I
+think) but I would have to calculate the group number, which is not impossible, but instead I decided to cheat slightly.
+And the puzzle input almost invites it by suggesting to only write a program that will handle the input, not any case.
+So I replaced rule 11 with this:
+ 
+`42 31 | 42 42 31 31 | 42 42 42 42 31 31 31 31`
+
+(spaces added for easy reading).  Of course, I had no idea whether 1 or 100 levels would be enough.  Instead of
+hardcoding it, I generated the regex using a parameter, then used JUnit 5's `@ParameterizedTest` to run the part 2
+problem with sequential parameters.  It was only 4 levels before the output stopped increasing.  The generated regex
+for part 2 is 30,009 characters.
+
 #### Day 18
 Left-to-right expression parsing in part1?  No need to construct a parser, I can tokenize and do the calculation in a
 single pass.  There are only single digits in the input and tests, so the parsing was kept to a minimum: I removed all
@@ -67,6 +107,9 @@ third elimination is to check whether there are any fields that only have 1 poss
 that field number from every other field mapping.  Now at this point I was expecting to still have to deal with some
 unresolved field mappings, and to have to do some inferencing using a tree search.  But actually, these 3 eliminations
 were enough to reduce the possible mappings to a one for each field.
+
+#### Day 12
+Bit of a vanilla solution, today, there is nothing particularly insightful or interesting to say!
 
 #### Day 11
 This is a nice one.  It is deceptively straightforward, but the implementation details, especially in part 2, benefit
