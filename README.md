@@ -96,7 +96,6 @@ z=0
 Surely the bottom-right cube has two enabled neighbours and should remain enabled?  Nevertheless, the solution produces
 the right answer.
 
-
 #### Day 16
 This was my favourite puzzle so far.  It's a process of a number of different elimination rules.  I created a data
 structure, it's a bit clumsy - it's a `Map` of `Set`s, where key=field name, value=a set of the possible fields
@@ -107,6 +106,26 @@ third elimination is to check whether there are any fields that only have 1 poss
 that field number from every other field mapping.  Now at this point I was expecting to still have to deal with some
 unresolved field mappings, and to have to do some inferencing using a tree search.  But actually, these 3 eliminations
 were enough to reduce the possible mappings to a one for each field.
+
+### Day 15
+For Part 1, I just implemented the algorithm at face value, keeping previous spoken values in a list, and searching for
+the index of the last 2 occurrences.  This algorithm would have worked with part 2, but was too slow.  I kept the part-1
+implementation and wrote a different algorithm.  This uses a HashMap to store a spoken value with the turn it was spoken
+in.  I avoided needing to search for the second-last occurrence by keeping the previous spoken value in a variable
+instead.  This algorithm is a bit more complicated in that there are numerous places where off-by-one bugs can creep in,
+and each iteration of the loop performs the write of the previous turn's value and the calculation of the next turn.
+
+#### Day 14
+It would be quite easy to do this with a for-loop through a binary number represented as a String, in effect modelling
+a binary number as a String.  I decided to try doing it with genuine bit masks however.  In part 1, the mask is made up
+of the X characters, that must remain untouched, and the specified bits that must overwrite the corresponding bits in
+the value.  I did this using two bitmasks derived from the supplied mask: one results in the non-"X" bits being cleared
+when AND'd with the value, and another that results in the non-"X" bits in the value being set to the same as the mask
+when OR'd with the result of applying the first mask.
+
+Part 2 is subtly different.  The specified bits in the mask must be OR'd, but the "X"-bits (floating) must overwrite
+those in the value.  This I did with 3 masks: the first to clear the X-bits of the value, The second to apply one of the
+X-bit permutations to the value, and the third to OR the specified bits.
 
 #### Day 12
 Bit of a vanilla solution, today, there is nothing particularly insightful or interesting to say!
