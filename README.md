@@ -6,6 +6,13 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 21
+This is another eliminator/inferring puzzle, like day 16.  The algorithm is quite similar to 16 but an initial step is
+also needed: an allergen can only belong to a single ingredient, so when an allergen is listed multiple times, I can
+intersect the ingredients of the 2 allergens to reduce the possibilities.  Part 1 is to deduce the ingredients that
+cannot have an allergen, and part 2 is to deduce the allergen/ingredient links.  I unknowingly did part 2 as part of the
+part 1 solution anyway, so only a little refactoring was required.
+
 #### Day 19
 I was contemplating using Parboiled (see day 2) again today but then it struck me that the syntax rules are very
 simple, with only sequences and choices.  As a bit of a joke I tried expanding out rule 0 fully into a single regular
