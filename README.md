@@ -6,6 +6,51 @@ https://adventofcode.com/2020
 
 ### Solutions
 
+#### Day 24
+So I did a String-replace on the input so that `se -> a`, `sw -> b`, `nw -> c`, `ne -> d`.  I didn't even use constants,
+so here a find variation of the [magic-number antipattern](https://en.wikipedia.org/wiki/Magic_number_%28programming%29)
+albeit in character form.  Anyway, this made the input string easier to handle, with 1 character representing 1 move.
+I implemented each line as a Guava's `LineProcessor` which is a nice fit for this kind of problem.  Part 1 is quite
+straightforward, where each line ends at a tile that becomes flipped.
+
+Part 2 takes the flipped input and we apply another cool game of Conway-like rules similar to days 11 and 17.  This one
+has an infinite space and this time each tile has 6 sides.  Somehow I managed to implement the algorithm without
+needing to draw on hexagonal graph paper.  I think once you settle on a coordinate system and encapsulate the logic to
+find neighbour coordinates the rest of part 2 falls in to place.
+
+#### Day 23
+This could be a messy problem.  Assuming we store our cups in an array or list:
+* Picking up cups at the end of the array would require some cups to be picked from the end and some from the start
+* Accessing elements by both their index (to find the next current cup) and by their value (destination list)
+
+Although I suspected this would come back to bite me (although it doesn't always: YAGNI), because there are only 10 cups
+in the input I was happy to model as a ring buffer.  The JDK doesn't have one of these, but
+[Commons Collections](https://commons.apache.org/proper/commons-collections/) has a `LoopingIterator` that does
+the job nicely.  I stored all of the cups in a `LinkedList` for insert/deletion speed, and used an additional `TreeSet`
+to be able to easily use it to find the next available lower cup number for the destination cup.  Good use of
+data-structures here meant that part 1 only needed 1 if-statement which for a complicated algorithm, I was quite pleased
+with.  The downside is that to shift the cups required a full search of the `LinkedList` to find the desintation
+position.
+
+Part 2 is the same problem scaled up to 10,000,000 turns which the downside just mentioned proved to be a showstopper.
+The problem with this puzzle is that it requires index-based access, hash-based access, and insertion/removal
+performance.  If Java's `LinkedList` exposed its nodes, it would be easy to hold references to each cup but that isn't
+possible.  Commons Collections has `TreeList` that offers good-enough performance for insert/remove and index-based
+access but would still require searching the entire list to find the destination.  I was quite stuck with this, and it's
+the first puzzle I had to get a hint from the [AoC Reddit](https://www.reddit.com/r/adventofcode/) for: and the hint was
+to use an additional array to map the cup number to the next cup number.  I've Java'ized this idea a bit, and used the 
+`TreeMap` class where the key is the cup number, and the value is the next cup number.  It is basically a crude linked-
+list implementation and it has cut out the need to use indexes altogether.  The other nice thing is that the key-set in
+a `TreeMap` is a `NavigableSet`, meaning I could use the same method as part 1 to find the lower cup value.  Although
+I was quite pleased with my part 1 solution, the part-2 solution is simpler and only uses 1 million-sized collection
+instead of 2.  I've left both solutions in the class anyway.
+
+#### Day 22
+Part 1 can be implemented as described.  Part 2 is a fun recursive puzzle, and has an additional *infinite-game-
+prevention* check.  I originally used Java's `hashCode()` to hash the two decks but I was worried it would not be unique
+enough so I ended up writing a custom hash key in the course of hunting for a bug that turned out to be something else
+anyway.
+
 #### Day 21
 This is another eliminator/inferring puzzle, like day 16.  The algorithm is quite similar to 16 but an initial step is
 also needed: an allergen can only belong to a single ingredient, so when an allergen is listed multiple times, I can

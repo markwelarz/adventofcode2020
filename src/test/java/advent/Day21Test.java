@@ -30,6 +30,7 @@ public class Day21Test
 		long answer = new Day21().part1(input);
 		System.out.println(answer);
 		assertThat(answer).isLessThan(3825L);
+		// TODO answer
 	}
 
 	@Test
